@@ -10,7 +10,6 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\Pagination\TraversablePaginator;
 use ApiPlatform\State\ProviderInterface;
 use ArrayIterator;
-use EnderLab\ApiTranslatableBundle\Service\TranslationService;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfonycasts\MicroMapper\MicroMapperInterface;
@@ -23,7 +22,6 @@ readonly class EntityToApiStateProvider implements ProviderInterface
         #[Autowire(service: ItemProvider::class)]
         private ProviderInterface $itemProvider,
         private MicroMapperInterface $microMapper,
-        private TranslationService $translationService,
     ) {
     }
 
@@ -40,7 +38,7 @@ readonly class EntityToApiStateProvider implements ProviderInterface
             $dtos = [];
 
             foreach ($entities as $entity) {
-                $dtos[] = $this->translationService->translate($this->microMapper->map($entity, $resourceClass));
+                $dtos[] = $this->microMapper->map($entity, $resourceClass);
             }
 
             return new TraversablePaginator(
@@ -57,6 +55,6 @@ readonly class EntityToApiStateProvider implements ProviderInterface
             return null;
         }
 
-        return $this->translationService->translate($this->microMapper->map($entity, $resourceClass));
+        return $this->microMapper->map($entity, $resourceClass);
     }
 }
